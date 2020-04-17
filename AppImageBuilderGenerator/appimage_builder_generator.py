@@ -22,6 +22,28 @@ class AppImageBuilderGenerator:
     def setupQuestions(self):
         logging.debug("Setting up questions")
         self.questionnaire.one('day', 'Sunday', 'Monday', 'Tuesday', prompt='What day is it?')
+
+        ### AppDir
+        ## app_info
+        # id
+        # name
+        # icon
+        # version
+        # exec
+        # exec_args
+        ## runtime
+        # generator
+        # env
+        ## apt
+        # arch
+        # sources
+        # include
+        # exclude
+        ## files
+        # exclude
+        ### AppImage
+        ## arch
+        ## file_name
         
     def generate(self):
         self.questionnaire.run()
