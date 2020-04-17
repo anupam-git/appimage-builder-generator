@@ -12,28 +12,50 @@
 #  all copies or substantial portions of the Software.
 
 import logging
-from questionnaire import Questionnaire
+import os
+import questionary
+from emrichen import Context, Template
+
 
 class AppImageBuilderGenerator:
     def __init__(self):
-        self.questionnaire = Questionnaire()
-        self.setupQuestions()
+        self.app_info_id = ''
+        self.app_info_name = ''
+        self.app_info_icon = ''
+        self.app_info_version = ''
+        self.app_info_exec = ''
+        self.app_info_exec_args = ''
         
-    def setupQuestions(self):
-        logging.debug("Setting up questions")
-        self.questionnaire.one('day', 'Sunday', 'Monday', 'Tuesday', prompt='What day is it?')
+        self.runtime_env = []
 
-        ### AppDir
-        ## app_info
-        # id
-        # name
-        # icon
-        # version
-        # exec
-        # exec_args
-        ## runtime
-        # generator
-        # env
+        self.setup_questions()
+        
+    def setup_questions(self):
+        # AppDir ->
+        self.app_info_id = questionary.text('ID (com.example.app) :').ask()
+        self.app_info_name = questionary.text('Application Name :').ask()
+        self.app_info_icon = questionary.text('Icon :').ask()
+        self.app_info_version = questionary.text('Version :').ask()
+        self.app_info_exec = questionary.text('Executable path (usr/bin/app) :').ask()
+        self.app_info_exec_args = questionary.text('Arguments [Default: $@] :').ask()
+
+        # AppDir -> runtime
+        questionary.select(
+            'Generator (Select `Wrapper` if unsure)',
+            choices=[
+                'wrapper',
+                'classic',
+                'proot'
+            ]).ask()
+
+        while True:
+            env = questionary.text('Runtime Environment Variable <Press Enter to break> :').ask()
+
+            if len(env.strip()) == 0:
+                break
+            else:
+                self.runtime_env.append(env)
+
         ## apt
         # arch
         # sources
@@ -44,7 +66,13 @@ class AppImageBuilderGenerator:
         ### AppImage
         ## arch
         ## file_name
-        
+
     def generate(self):
-        self.questionnaire.run()
-        print(self.questionnaire.format_answers(fmt='array'))
+        appimage_builder_yml_template_path = os.path.realpath(os.path.join(os.path.dirname(__file__), 'template', 'AppImageBuilder.in.yml'))
+        with open(appimage_builder_yml_template_path, 'r') as filedata:
+            appimage_builder_yml_template = Template.parse(filedata, 'yaml')
+
+        appimage_builder_yml_ctx = Context()
+
+        logging.debug(appimage_builder_yml_template.render(appimage_builder_yml_ctx))
+
