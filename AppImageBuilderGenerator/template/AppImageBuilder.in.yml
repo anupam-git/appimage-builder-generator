@@ -13,29 +13,21 @@ AppDir:
     
   runtime:
     generator: !Var runtime_generator
-    env: !Var runtime_env
+    env:
+      !Var runtime_env
 
   apt:
     arch: !Var apt_arch
-    
     sources:
-      !Loop
-        over: !Var apt_sources
-        as: source
-        index_as: index
-        template:
-          sourceline: !Var source.line
-          key_url: !Var source.url
-
+      !Var apt_sources
     include:
-        !Var apt_includes
-        
+      !Var apt_includes
     exclude:
-        !Var apt_excludes
+      !Var apt_excludes
 
   files:
     exclude:
-      !Var file_excludes
+      !Var files_excludes
 
 AppImage:
   arch: !Var appimage_arch

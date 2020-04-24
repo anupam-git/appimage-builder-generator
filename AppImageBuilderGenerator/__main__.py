@@ -13,8 +13,8 @@
 
 import argparse
 import logging
-import os
 from AppImageBuilderGenerator import AppImageBuilderGenerator
+
 
 def __main__():
     parser = argparse.ArgumentParser(description='AppImageBuilder Recipe Generation tool')
@@ -29,7 +29,7 @@ def __main__():
 
     generator = AppImageBuilderGenerator()
     generator.generate()
-    
+
 
 if __name__ == '__main__':
     # execute only if run as the entry point into the program
